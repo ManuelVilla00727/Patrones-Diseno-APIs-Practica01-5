@@ -3,6 +3,7 @@ import { EmpleadoController } from '../controllers/empleados.controllers';
 import { EmpleadoService } from '../services/empleado.service';
 import { EmpleadoRepositoryFactory } from '../repositories/repository.factory';
 import { validateRequest } from '../middlewares/validation.middleware';
+import { authenticateJWT } from '../middlewares/auth.middleware.js';
 import {
   createEmpleadoSchema,
   updateEmpleadoSchema,
@@ -16,11 +17,14 @@ export function createEmpleadoRouter(): express.Router {
   const service = new EmpleadoService(repository);
   const controller = new EmpleadoController(service);
 
+  // GET: Abierto (cualquiera puede ver la lista)
   router.get('/', validateRequest({ query: listQuerySchema }), controller.getEmpleados);
-  router.post('/', validateRequest({ body: createEmpleadoSchema }), controller.createEmpleado);
   router.get('/:id', validateRequest({ params: idParamSchema }), controller.getEmpleadoById);
-  router.put('/:id', validateRequest({ params: idParamSchema, body: updateEmpleadoSchema }), controller.updateEmpleado);
-  router.delete('/:id', validateRequest({ params: idParamSchema }), controller.deleteEmpleado);
+
+  // POST, PUT, DELETE: Protegidos con JWT (solo usuarios autenticados)
+  router.post('/', authenticateJWT, validateRequest({ body: createEmpleadoSchema }), controller.createEmpleado);
+  router.put('/:id', authenticateJWT, validateRequest({ params: idParamSchema, body: updateEmpleadoSchema }), controller.updateEmpleado);
+  router.delete('/:id', authenticateJWT, validateRequest({ params: idParamSchema }), controller.deleteEmpleado);
 
   return router;
 }
