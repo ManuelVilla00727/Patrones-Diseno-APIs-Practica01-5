@@ -19,9 +19,9 @@ module.exports = {
       host: '3.214.243.100',
       key: 'C:/practica-mean/practica7-key.pem',
       ref: 'origin/main',
-      repo: 'https://github.com/ManuelVilla00727/Patrones-Diseno-APIs-Practica01-5.git',
+      repo: 'git@github.com:ManuelVilla00727/Patrones-Diseno-APIs-Practica01-5.git',
       path: '/home/ubuntu/Patrones-Diseno-APIs-Practica01-5',
-      'post-deploy': 'npm install && pm2 reload ecosystem.config.cjs'
+      'post-deploy': 'git reset --hard && git clean -fd && npm install && pm2 reload ecosystem.config.cjs'
     }
   }
 };
